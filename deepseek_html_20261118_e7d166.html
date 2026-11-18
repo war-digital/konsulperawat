@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#0d9488">
+<meta name="description" content="Aplikasi konsul perawat/bidan ke dr. KHUZAIMAH">
+<title>Konsul Perawat/Bidan → dr. KHUZAIMAH</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Konsul Perawat">
+<meta name="mobile-web-app-capable" content="yes">
+
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --teal:#0d9488; --blue:#2563eb; --ink:#0f172a; --muted:#64748b;
+    --line:#e2e8f0; --bg:#f1f5f9; --radius:18px;
+    --shadow:0 10px 30px -12px rgba(15,23,42,.18);
+  }
+  body{
+    margin:0; padding:16px 14px 70px; min-height:100vh; color:var(--ink);
+    font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+    background:
+      radial-gradient(900px 500px at 8% -10%, #ccfbf1 0%, transparent 60%),
+      radial-gradient(800px 500px at 110% 0%, #dbeafe 0%, transparent 55%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+    padding-top:calc(16px + env(safe-area-inset-top));
+    padding-bottom:calc(70px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  .hero{
+    display:flex;align-items:center;gap:14px;padding:18px 20px;border-radius:20px;
+    background:linear-gradient(135deg,#0d9488 0%,#0f766e 45%,#2563eb 100%);
+    color:#fff;box-shadow:0 18px 36px -18px rgba(13,148,136,.85);
+  }
+  .hero-icon{
+    width:52px;height:52px;flex-shrink:0;display:grid;place-items:center;font-size:1.7rem;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:16px;
+  }
+  .hero h1{margin:0;font-size:clamp(1.02rem,3.6vw,1.35rem);letter-spacing:.2px}
+  .hero p{margin:3px 0 0;font-size:.78rem;opacity:.9;font-weight:500}
+  #btnInstall{
+    background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.35);
+    padding:9px 14px;font-size:.78rem;border-radius:10px;cursor:pointer;font-weight:700;
+    white-space:nowrap;display:none;
+  }
+  .layout{display:grid;gap:16px;margin-top:16px}
+  @media(min-width:920px){
+    .layout{grid-template-columns:1.55fr 1fr;align-items:start}
+    .preview{position:sticky;top:16px}
+  }
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow);
+  }
+  .card h2{
+    margin:0 0 16px;font-size:.95rem;font-weight:800;letter-spacing:.2px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .section-title{
+    display:flex;align-items:center;gap:9px;margin:18px 0 10px;
+    font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);
+  }
+  .section-title:first-of-type{margin-top:4px}
+  .section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .field.full{grid-column:1/-1}
+  label{font-size:.75rem;font-weight:700;color:#334155}
+  label span{font-weight:500;color:var(--muted);font-size:.72rem}
+  input,textarea{
+    width:100%;font:inherit;font-size:.88rem;color:var(--ink);
+    background:#f8fafc;border:1.5px solid var(--line);border-radius:12px;
+    padding:10px 12px;outline:none;transition:border-color .18s,box-shadow .18s,background .18s;
+  }
+  input::placeholder,textarea::placeholder{color:#a3aebd}
+  input:focus,textarea:focus{background:#fff;border-color:var(--teal);box-shadow:0 0 0 4px rgba(13,148,136,.13)}
+  textarea{resize:vertical;min-height:58px;line-height:1.5;font-family:inherit}
+  .imt-box{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:#f0fdfa;border:1.5px dashed #99f6e4;border-radius:12px;
+    padding:10px 13px;font-size:.8rem;font-weight:700;color:#0f766e;margin-top:10px;
+  }
+  .imt-box b{font-size:.95rem}
+  .imt-box .kat{
+    background:#0d9488;color:#fff;border-radius:999px;padding:3px 11px;font-size:.7rem;font-weight:700;
+  }
+  .dx-box{
+    margin-top:14px;padding:13px 15px;border-radius:14px;
+    background:linear-gradient(135deg,#ede9fe,#ddd6fe);
+    border:1.5px solid #a78bfa;
+  }
+  .dx-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+  .dx-title{
+    font-size:.74rem;font-weight:800;color:#5b21b6;
+    letter-spacing:.06em;text-transform:uppercase;
+    display:flex;align-items:center;gap:6px;
+  }
+  .dx-count{background:#6d28d9;color:#fff;border-radius:999px;padding:2px 9px;font-size:.68rem;font-weight:800}
+  .dx-list{display:flex;flex-direction:column;gap:6px}
+  .dx-item{display:flex;gap:9px;align-items:flex-start;font-size:.82rem;color:#4c1d95;font-weight:600;line-height:1.4}
+  .dx-item .badge{
+    background:#6d28d9;color:#fff;border-radius:999px;
+    min-width:20px;height:20px;padding:0 6px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:.68rem;font-weight:800;flex-shrink:0;
+  }
+  .dx-item .reason{font-weight:500;color:#7c3aed;font-size:.72rem;display:block;margin-top:1px}
+  .dx-empty{font-size:.79rem;color:#7c3aed;font-style:italic;line-height:1.5}
+  .dx-note{
+    font-size:.68rem;color:#6d28d9;opacity:.8;margin-top:9px;line-height:1.4;
+    padding-top:8px;border-top:1px dashed rgba(109,40,217,.25);
+  }
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .btn{
+    border:0;cursor:pointer;font:inherit;font-size:.84rem;font-weight:700;
+    padding:11px 16px;border-radius:12px;display:inline-flex;align-items:center;gap:7px;
+    background:#f1f5f9;color:#334155;transition:transform .15s,box-shadow .15s,filter .15s;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.02)}
+  .btn:active{transform:translateY(0) scale(.985)}
+  .btn.primary{background:linear-gradient(135deg,#0d9488,#2563eb);color:#fff;box-shadow:0 10px 20px -10px rgba(13,148,136,.9)}
+  .btn.wa{background:#25d366;color:#fff;box-shadow:0 10px 20px -10px rgba(37,211,102,.95)}
+  .btn.ghost{background:#fff;border:1.5px solid var(--line)}
+  .btn.danger{background:#fee2e2;color:#b91c1c}
+  .btn.small{padding:7px 12px;font-size:.75rem;border-radius:10px}
+  .btn.block{width:100%;justify-content:center}
+  pre.preview-box{
+    margin:0;padding:14px 15px;border-radius:16px 16px 16px 5px;
+    background:#d9fdd3;color:#111b21;
+    font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    font-size:.735rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+    max-height:430px;overflow:auto;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),0 6px 16px -12px rgba(0,0,0,.4);
+  }
+  .hint{font-size:.72rem;color:var(--muted);margin:12px 0 0;line-height:1.5}
+  .riwayat-list{display:grid;gap:10px}
+  .ri{
+    border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fbfdff;
+    display:flex;flex-direction:column;gap:9px;
+  }
+  .ri-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+  .ri-name{font-size:.9rem;font-weight:800}
+  .ri-date{display:block;font-size:.71rem;color:var(--muted);margin-top:3px;font-weight:500}
+  .ri-meta{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{background:#e6f7f4;color:#0f766e;border-radius:999px;padding:3px 10px;font-size:.69rem;font-weight:700}
+  .chip.blue{background:#e8efff;color:#1d4ed8}
+  .chip.dx{background:#ede9fe;color:#5b21b6}
+  .ri-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .empty{
+    text-align:center;color:var(--muted);font-size:.84rem;padding:26px 12px;
+    border:1.5px dashed var(--line);border-radius:14px;line-height:1.6;
+  }
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,22px);
+    background:#0f172a;color:#fff;padding:11px 20px;border-radius:999px;
+    font-size:.82rem;font-weight:700;opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;z-index:99;box-shadow:0 14px 30px -14px #000;
+  }
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-icon">🩺</div>
+    <div style="flex:1;min-width:0">
+      <h1>Konsul Perawat/Bidan → dr. KHUZAIMAH</h1>
+      <p id="heroDate">Memuat tanggal…</p>
+    </div>
+    <button id="btnInstall" type="button">📲 Install</button>
+  </header>
+
+  <div class="layout">
+
+    <section class="card">
+      <h2>📝 Formulir Konsul</h2>
+
+      <div class="section-title">👤 Data Pasien &amp; Petugas</div>
+
+      <div class="imt-box" style="background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8;margin-top:0;margin-bottom:10px">
+        <span>Dokter Tujuan</span>
+        <b>dr. KHUZAIMAH</b>
+      </div>
+
+      <div class="grid">
+        <div class="field full">
+          <label>Nama Perawat / Bidan <span>(yang konsul)</span></label>
+          <input id="perawat" placeholder="Nama perawat / bidan" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label>Nama Pasien</label>
+          <input id="nama" placeholder="Nama lengkap pasien" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Usia <span>(tahun)</span></label>
+          <input id="usia" type="number" inputmode="numeric" min="0" max="150" placeholder="45">
+        </div>
+        <div class="field">
+          <label>GCS <span>(E…V…M…)</span></label>
+          <input id="gcs" placeholder="15 (E4V5M6)" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label>Alamat <span>(alamat / ruang rawat)</span></label>
+          <input id="alamat" placeholder="Jl. Melati No.12 / Ruang Melati 3" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label>Keluhan <span>(otomatis dianalisis untuk diagnosa)</span></label>
+          <textarea id="keluhan" rows="2" placeholder="Contoh: demam 3 hari, mual, nafsu makan menurun, sesak napas…"></textarea>
+        </div>
+      </div>
+
+      <div class="section-title">💉 Tanda-Tanda Vital</div>
+      <div class="grid">
+        <div class="field"><label>SB <span>(suhu °C)</span></label>
+          <input id="sb" type="number" step="0.1" inputmode="decimal" placeholder="36.5"></div>
+        <div class="field"><label>ND <span>(nadi x/mnt)</span></label>
+          <input id="nd" type="number" inputmode="numeric" placeholder="80"></div>
+        <div class="field"><label>RR <span>(x/mnt)</span></label>
+          <input id="rr" type="number" inputmode="numeric" placeholder="20"></div>
+        <div class="field"><label>SpO₂ <span>(%)</span></label>
+          <input id="spo2" type="number" inputmode="numeric" placeholder="98"></div>
+        <div class="field"><label>TD <span>(mmHg)</span></label>
+          <input id="td" placeholder="120/80" autocomplete="off"></div>
+        <div class="field"><label>KU <span>(keadaan umum)</span></label>
+          <input id="ku" placeholder="Compos mentis" autocomplete="off"></div>
+      </div>
+
+      <div class="section-title">📏 Antropometri</div>
+      <div class="grid">
+        <div class="field"><label>TB <span>(cm)</span></label>
+          <input id="tb" type="number" step="0.1" inputmode="decimal" placeholder="165"></div>
+        <div class="field"><label>BB <span>(kg)</span></label>
+          <input id="bb" type="number" step="0.1" inputmode="decimal" placeholder="60"></div>
+        <div class="field"><label>LP <span>(cm)</span></label>
+          <input id="lp" type="number" step="0.1" inputmode="decimal" placeholder="85"></div>
+      </div>
+
+      <div class="imt-box">
+        <span>IMT : <b id="imtVal">—</b></span>
+        <span class="kat" id="imtKat">—</span>
+      </div>
+
+      <div class="dx-box" id="dxBox">
+        <div class="dx-head">
+          <div class="dx-title">🔍 Diagnosa Keperawatan (otomatis)</div>
+          <span class="dx-count" id="dxCount">0</span>
+        </div>
+        <div class="dx-list" id="dxList">
+          <div class="dx-empty">Mulai isi keluhan &amp; tanda vital untuk melihat saran diagnosa.</div>
+        </div>
+        <div class="dx-note">⚕️ Saran berbasis kata kunci &amp; nilai vital — keputusan klinis tetap pada perawat/bidan/dokter.</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary block" id="btnSimpan">💾 Simpan Konsul</button>
+        <button class="btn ghost block" id="btnReset">↺ Bersihkan Form</button>
+      </div>
+    </section>
+
+    <aside class="card preview">
+      <h2>👁️ Pratinjau Pesan WhatsApp</h2>
+      <pre class="preview-box" id="preview"></pre>
+      <div class="actions">
+        <button class="btn primary block" id="btnSalin">📋 Salin Teks</button>
+        <button class="btn wa block" id="btnWA">📤 Kirim ke Grup WA</button>
+      </div>
+      <p class="hint">Di iPhone, tombol <b>Kirim ke Grup WA</b> membuka menu <b>Share iOS</b> — pilih WhatsApp lalu grup tujuan. Di Android langsung membuka WhatsApp.</p>
+    </aside>
+
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <h2>🗂️ Riwayat Konsul <span style="font-weight:600;color:var(--muted);font-size:.78rem" id="jmlRiwayat"></span></h2>
+    <div class="riwayat-list" id="riwayat"></div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ======================= SETUP ======================= */
+const IDS = ['perawat','nama','usia','alamat','keluhan','sb','nd','rr','spo2','td','gcs','ku','tb','bb','lp'];
+const el = {};
+IDS.forEach(id => el[id] = document.getElementById(id));
+const KEY = 'konsul_perawat_v1';
+const DOKTER = 'dr. KHUZAIMAH';
+const $ = s => document.querySelector(s);
+const previewEl = $('#preview');
+const riwayatEl = $('#riwayat');
+const toastEl   = $('#toast');
+const pad = n => String(n).padStart(2,'0');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function getData(){ const d={}; IDS.forEach(id=>d[id]=(el[id].value||'').trim()); return d; }
+
+/* ======================= RULES DIAGNOSA ======================= */
+const RULES_KELUHAN = [
+  { kw: ['demam','panas','febris','fever','suhu tinggi','menggigil'],                  dx: 'Hipertermia' },
+  { kw: ['nyeri','sakit','pegal','kram','sakit kepala','migrain','pusing'],           dx: 'Nyeri Akut' },
+  { kw: ['mual','muntah','nafsu makan menurun','tidak nafsu makan','anoreksia','sulit makan','tidak mau makan'], dx: 'Nutrisi Kurang dari Kebutuhan Tubuh' },
+  { kw: ['sesak','sesak napas','sulit bernapas','napas pendek','dyspnea','mengi','wheezing','orthopnea','napas cepat'], dx: 'Pola Napas Tidak Efektif' },
+  { kw: ['batuk','berdahak','dahak','sputum','pilek','hidung tersumbat'],             dx: 'Bersihan Jalan Napas Tidak Efektif' },
+  { kw: ['diare','bab cair','mencret'],                                                dx: 'Diare' },
+  { kw: ['sembelit','konstipasi','sulit bab','tidak bab'],                             dx: 'Konstipasi' },
+  { kw: ['lemas','lemah','mudah lelah','fatigue','lelah','lesu','tidak bertenaga'],   dx: 'Intoleransi Aktivitas' },
+  { kw: ['gelisah','cemas','khawatir','takut','anxious','panik'],                     dx: 'Ansietas' },
+  { kw: ['sulit tidur','insomnia','tidak bisa tidur','terbangun'],                    dx: 'Gangguan Pola Tidur' },
+  { kw: ['gatal','ruam','kemerahan','alergi','urtikaria','biduran'],                  dx: 'Gangguan Rasa Nyaman' },
+  { kw: ['luka','ulkus','decubitus','lecet','robek'],                                 dx: 'Kerusakan Integritas Kulit' },
+  { kw: ['berdebar','jantung berdebar','palpitasi','debar'],                          dx: 'Risiko Penurunan Curah Jantung' },
+  { kw: ['bak','kencing','berkemih','anyang','disuria','retensi urin','oliguria'],    dx: 'Gangguan Eliminasi Urin' },
+  { kw: ['bengkak','edema','sembab','bengkak kaki'],                                  dx: 'Kelebihan Volume Cairan' },
+  { kw: ['haus','kering','dehidrasi','mulut kering','turgor menurun'],                dx: 'Defisit Volume Cairan' },
+  { kw: ['kesemutan','baal','mati rasa','kebas'],                                     dx: 'Gangguan Sensori Persepsi' },
+  { kw: ['tidak sadar','penurunan kesadaran','bingung','delirium','somnolen','mengantuk berat'], dx: 'Risiko Cedera' },
+  { kw: ['bab berdarah','melena','hematemesis','muntah darah','perdarahan'],          dx: 'Risiko Perdarahan' },
+  { kw: ['pusing berputar','vertigo','kunang-kunang','pandangan kabur','goyah'],      dx: 'Risiko Jatuh' },
+  { kw: ['gatal tenggorokan','nyeri menelan','sulit menelan','dispagia'],             dx: 'Gangguan Menelan' },
+  { kw: ['sulit gerak','kaku sendi','nyeri sendi','bengkak sendi'],                   dx: 'Gangguan Mobilitas Fisik' }
+];
+
+function hasKeyword(text, kw){
+  let idx = 0;
+  while ((idx = text.indexOf(kw, idx)) !== -1){
+    const before = text.slice(Math.max(0, idx - 15), idx);
+    const negated = /(tidak|tanpa|belum|tdk|ga|gak|nggak)\s+(ada\s+)?$/.test(before);
+    if (!negated) return true;
+    idx += kw.length;
+  }
+  return false;
+}
+
+function diagnosaVital(d){
+  const out = [];
+  const sb   = parseFloat(d.sb);
+  const nd   = parseFloat(d.nd);
+  const rr   = parseFloat(d.rr);
+  const spo2 = parseFloat(d.spo2);
+
+  if (sb >= 37.5)      out.push({ dx:'Hipertermia',                    alasan:`SB ${sb}°C` });
+  if (sb > 0 && sb < 36) out.push({ dx:'Hipotermia',                   alasan:`SB ${sb}°C` });
+  if (spo2 && spo2 < 95) out.push({ dx:'Gangguan Pertukaran Gas',      alasan:`SpO₂ ${spo2}%` });
+  if (rr && (rr > 24 || rr < 12)) out.push({ dx:'Pola Napas Tidak Efektif', alasan:`RR ${rr} x/mnt` });
+  if (nd && (nd > 100 || nd < 60)) out.push({ dx:'Risiko Penurunan Curah Jantung', alasan:`ND ${nd} x/mnt` });
+
+  if (d.td){
+    const m = d.td.match(/(\d+)\s*\/\s*(\d+)/);
+    if (m){
+      const sys = +m[1], dia = +m[2];
+      if (sys >= 140 || dia >= 90) out.push({ dx:'Risiko Perfusi Serebral Tidak Efektif', alasan:`TD ${d.td} mmHg` });
+      if (sys < 90)                out.push({ dx:'Risiko Syok',                          alasan:`TD ${d.td} mmHg` });
+    }
+  }
+  if (d.gcs){
+    const g = parseFloat(d.gcs);
+    if (g && g < 15) out.push({ dx:'Risiko Cedera', alasan:`GCS ${d.gcs}` });
+  }
+  return out;
+}
+
+function hitungIMT(d){
+  const bb = parseFloat(d.bb), tb = parseFloat(d.tb);
+  if(!bb || !tb || tb <= 0) return null;
+  const v = bb / Math.pow(tb/100, 2);
+  if(!isFinite(v)) return null;
+  let kat = 'Normal';
+  if(v < 18.5) kat = 'Kurus';
+  else if(v < 23) kat = 'Normal';
+  else if(v < 25) kat = 'Overweight';
+  else if(v < 30) kat = 'Obesitas I';
+  else kat = 'Obesitas II';
+  return { v, kat };
+}
+
+function getDiagnosa(d){
+  const map = new Map();
+  const kl = (d.keluhan || '').toLowerCase();
+
+  RULES_KELUHAN.forEach(rule => {
+    if (map.has(rule.dx)) return;
+    const hit = rule.kw.find(k => hasKeyword(kl, k));
+    if (hit) map.set(rule.dx, { dx: rule.dx, alasan: `Keluhan: "${hit}"` });
+  });
+
+  diagnosaVital(d).forEach(r => {
+    if (!map.has(r.dx)) map.set(r.dx, r);
+  });
+
+  const imt = hitungIMT(d);
+  if (imt){
+    if (imt.v < 18.5 && !map.has('Nutrisi Kurang dari Kebutuhan Tubuh'))
+      map.set('Nutrisi Kurang dari Kebutuhan Tubuh', { dx:'Nutrisi Kurang dari Kebutuhan Tubuh', alasan:`IMT ${imt.v.toFixed(1)} (${imt.kat})` });
+    if (imt.v >= 25 && !map.has('Risiko Sindrom Metabolik'))
+      map.set('Risiko Sindrom Metabolik', { dx:'Risiko Sindrom Metabolik', alasan:`IMT ${imt.v.toFixed(1)} (${imt.kat})` });
+  }
+  return Array.from(map.values());
+}
+
+/* ======================= BUILD TEXT ======================= */
+function buildText(d, when){
+  const w = when ? new Date(when) : new Date();
+  const tgl = w.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const jam = pad(w.getHours()) + ':' + pad(w.getMinutes());
+  const L = [];
+
+  L.push('🩺 *KONSUL PERAWAT/BIDAN → DOKTER*');
+  L.push('👩‍⚕️ Dokter Tujuan : ' + DOKTER);
+  L.push('👩‍⚕️ Perawat/Bidan  : ' + (d.perawat || '-'));
+  L.push('🗓 ' + tgl);
+  L.push('🕐 ' + jam + ' WIB');
+  L.push('━━━━━━━━━━━━━━');
+  L.push('👤 *DATA PASIEN*');
+  if(d.nama)    L.push('Nama    : ' + d.nama);
+  if(d.usia)    L.push('Usia    : ' + d.usia + ' tahun');
+  if(d.alamat)  L.push('Alamat  : ' + d.alamat);
+  if(d.keluhan){
+    const kLines = d.keluhan.split('\n');
+    L.push('Keluhan : *' + (kLines[0] || '') + '*');
+    kLines.slice(1).forEach(l => L.push('          *' + l + '*'));
+  }
+  if(!d.nama && !d.usia && !d.alamat && !d.keluhan) L.push('-');
+
+  const V = [];
+  if(d.sb)   V.push('SB    : ' + d.sb + ' °C');
+  if(d.nd)   V.push('ND    : ' + d.nd + ' x/menit');
+  if(d.rr)   V.push('RR    : ' + d.rr + ' x/menit');
+  if(d.spo2) V.push('SpO2  : ' + d.spo2 + ' %');
+  if(d.td)   V.push('TD    : ' + d.td + ' mmHg');
+  if(d.gcs)  V.push('GCS   : ' + d.gcs);
+  if(d.ku)   V.push('KU    : ' + d.ku);
+  if(V.length){ L.push(''); L.push('💉 *TANDA-TANDA VITAL*'); L.push(...V); }
+
+  const A = [];
+  if(d.tb) A.push('TB    : ' + d.tb + ' cm');
+  if(d.bb) A.push('BB    : ' + d.bb + ' kg');
+  if(d.lp) A.push('LP    : ' + d.lp + ' cm');
+  const imt = hitungIMT(d);
+  if(imt) A.push('IMT   : ' + imt.v.toFixed(1) + ' (' + imt.kat + ')');
+  if(A.length){ L.push(''); L.push('📏 *ANTROPOMETRI*'); L.push(...A); }
+
+  const dx = getDiagnosa(d);
+  if (dx.length){
+    L.push('');
+    L.push('🔍 *SARAN DIAGNOSA KEPERAWATAN*');
+    dx.forEach((item, i) => L.push(`${i+1}. ${item.dx}`));
+  }
+
+  L.push('');
+  L.push('━━━━━━━━━━━━━━');
+  /* Nama dokter dihilangkan dari baris bawah */
+  L.push('Mohon arahan & terapi. Terima kasih 🙏');
+
+  return L.join('\n');
+}
+
+function renderDiagnosa(d){
+  const dx = getDiagnosa(d);
+  $('#dxCount').textContent = dx.length;
+  const list = $('#dxList');
+
+  if (!dx.length){
+    list.innerHTML = '<div class="dx-empty">Mulai isi keluhan &amp; tanda vital untuk melihat saran diagnosa.</div>';
+    return;
+  }
+  list.innerHTML = dx.map((item, i) => `
+    <div class="dx-item">
+      <span class="badge">${i+1}</span>
+      <div>
+        ${esc(item.dx)}
+        <span class="reason">${esc(item.alasan)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updatePreview(){
+  const d = getData();
+  previewEl.textContent = buildText(d);
+  const imt = hitungIMT(d);
+  $('#imtVal').textContent = imt ? imt.v.toFixed(1) : '—';
+  $('#imtKat').textContent = imt ? imt.kat : '—';
+  renderDiagnosa(d);
+}
+IDS.forEach(id => el[id].addEventListener('input', updatePreview));
+
+/* ======================= TOAST ======================= */
+let toastTimer;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+
+/* ======================= CLIPBOARD ======================= */
+async function copyText(text, silent = false){
+  try{
+    await navigator.clipboard.writeText(text);
+    if (!silent) toast('Teks berhasil disalin ✓');
+    return true;
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false;
+    try{ ok = document.execCommand('copy'); }catch(err){}
+    document.body.removeChild(ta);
+    if (!silent) toast(ok ? 'Teks berhasil disalin ✓' : 'Gagal menyalin');
+    return ok;
+  }
+}
+
+/* ======================= KIRIM KE WA (fix iPhone) ======================= */
+/*
+   Strategi:
+   1) navigator.share() → buka native share sheet (iOS & Android modern).
+      Di iOS, pengguna memilih WhatsApp → grup tujuan. Ini paling andal.
+   2) Fallback: salin ke clipboard, lalu buka wa.me
+      - iOS: location.href (window.open sering diblok popup blocker)
+      - Android/Desktop: window.open
+*/
+async function kirimKeWA(text){
+  // 1) Native share sheet
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Konsul Perawat/Bidan', text });
+      return;
+    } catch(err){
+      if (err && err.name === 'AbortError') return; // user cancel, jangan lanjut
+      // gagal → fallback
+    }
+  }
+
+  // 2) Fallback
+  await copyText(text, true);
+  const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isIOS){
+    // iOS Safari: location.href lebih andal untuk deep-link
+    window.location.href = url;
+  } else {
+    const w = window.open(url, '_blank');
+    if (!w) window.location.href = url;
+  }
+}
+
+/* ======================= STORAGE ======================= */
+function loadList(){ try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } }
+function saveList(list){ localStorage.setItem(KEY, JSON.stringify(list)); }
+
+function simpanKonsul(){
+  const d = getData();
+  if(!d.perawat){ toast('Nama perawat/bidan wajib diisi'); el.perawat.focus(); return; }
+  if(!d.nama){ toast('Nama pasien wajib diisi'); el.nama.focus(); return; }
+  if(!d.keluhan && !d.sb && !d.td){ toast('Isi minimal keluhan atau tanda vital'); el.keluhan.focus(); return; }
+  const list = loadList();
+  list.unshift({ id: Date.now(), waktu: new Date().toISOString(), data: d });
+  saveList(list);
+  renderRiwayat();
+  toast('Konsul tersimpan ✓');
+}
+
+function renderRiwayat(){
+  const list = loadList();
+  $('#jmlRiwayat').textContent = list.length ? '(' + list.length + ')' : '';
+  if(!list.length){
+    riwayatEl.innerHTML = '<div class="empty">Belum ada data tersimpan.<br>Isi formulir lalu tekan <b>Simpan Konsul</b>.</div>';
+    return;
+  }
+  riwayatEl.innerHTML = list.map(item => {
+    const d = item.data;
+    const w = new Date(item.waktu);
+    const tgl = w.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const jam = pad(w.getHours()) + ':' + pad(w.getMinutes());
+    const chips = [];
+    if(d.td)   chips.push('<span class="chip">TD ' + esc(d.td) + '</span>');
+    if(d.sb)   chips.push('<span class="chip">SB ' + esc(d.sb) + '°C</span>');
+    if(d.spo2) chips.push('<span class="chip">SpO₂ ' + esc(d.spo2) + '%</span>');
+    if(d.nd)   chips.push('<span class="chip blue">ND ' + esc(d.nd) + '</span>');
+    const imt = hitungIMT(d);
+    if(imt)    chips.push('<span class="chip blue">IMT ' + imt.v.toFixed(1) + '</span>');
+    const dx = getDiagnosa(d);
+    if(dx.length) chips.push('<span class="chip dx">🔍 ' + dx.length + ' dx</span>');
+
+    return `
+      <div class="ri">
+        <div class="ri-top">
+          <div>
+            <div class="ri-name">${esc(d.nama || '(tanpa nama)')}</div>
+            <span class="ri-date">Perawat/Bidan: ${esc(d.perawat || '-')} • ${tgl} • ${jam} WIB</span>
+          </div>
+        </div>
+        ${chips.length ? '<div class="ri-meta">' + chips.join('') + '</div>' : ''}
+        <div class="ri-actions">
+          <button class="btn small ghost" data-act="buka" data-id="${item.id}">📂 Buka</button>
+          <button class="btn small primary" data-act="salin" data-id="${item.id}">📋 Salin</button>
+          <button class="btn small wa" data-act="wa" data-id="${item.id}">📤 WA</button>
+          <button class="btn small danger" data-act="hapus" data-id="${item.id}">🗑 Hapus</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+riwayatEl.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-act]');
+  if(!btn) return;
+  const id = Number(btn.dataset.id);
+  const act = btn.dataset.act;
+  const list = loadList();
+  const item = list.find(x => x.id === id);
+  if(!item) return;
+  if(act === 'buka'){
+    IDS.forEach(k => el[k].value = item.data[k] || '');
+    updatePreview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Data dimuat ke formulir');
+  }
+  else if(act === 'salin'){ copyText(buildText(item.data, item.waktu)); }
+  else if(act === 'wa'){ kirimKeWA(buildText(item.data, item.waktu)); }
+  else if(act === 'hapus'){
+    if(confirm('Hapus data konsul ini?')){
+      saveList(list.filter(x => x.id !== id));
+      renderRiwayat();
+      toast('Data dihapus');
+    }
+  }
+});
+
+$('#btnSimpan').addEventListener('click', simpanKonsul);
+$('#btnReset').addEventListener('click', () => {
+  if(!confirm('Bersihkan seluruh isian formulir?')) return;
+  IDS.forEach(k => el[k].value = '');
+  updatePreview();
+  el.perawat.focus();
+  toast('Formulir dibersihkan');
+});
+$('#btnSalin').addEventListener('click', () => copyText(previewEl.textContent));
+
+$('#btnWA').addEventListener('click', () => {
+  const d = getData();
+  if(!d.perawat){ toast('Isi nama perawat/bidan dulu ya'); el.perawat.focus(); return; }
+  if(!d.nama){ toast('Isi nama pasien dulu ya'); el.nama.focus(); return; }
+  kirimKeWA(previewEl.textContent);
+});
+
+/* ======================= PWA ======================= */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('SW OK:', reg.scope))
+      .catch(err => console.warn('SW gagal:', err));
+  });
+}
+
+let deferredPrompt = null;
+const btnInstall = document.getElementById('btnInstall');
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (btnInstall) btnInstall.style.display = 'inline-flex';
+});
+if (btnInstall) {
+  btnInstall.addEventListener('click', async () => {
+    if (!deferredPrompt){ toast('Gunakan menu browser → "Install app"'); return; }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    btnInstall.style.display = 'none';
+    if (outcome === 'accepted') toast('Aplikasi diinstall ✓');
+  });
+}
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  if (btnInstall) btnInstall.style.display = 'none';
+  toast('Aplikasi berhasil diinstall ✓');
+});
+window.addEventListener('offline', () => toast('📴 Mode offline — data tetap bisa diisi'));
+window.addEventListener('online',  () => toast('🌐 Kembali online'));
+
+/* ======================= INIT ======================= */
+(function init(){
+  const now = new Date();
+  $('#heroDate').textContent = now.toLocaleDateString('id-ID',{
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  }) + ' • ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ' WIB';
+  updatePreview();
+  renderRiwayat();
+})();
+</script>
+</body>
+</html>
